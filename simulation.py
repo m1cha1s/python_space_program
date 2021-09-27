@@ -17,8 +17,10 @@ class Simulation:
         for i, ship in enumerate(self.ships):
             ship.apply_force(self.forces[i])
             ship.apply_thrust(np.array([[0],[self.settings.engine1]], float))
-            if ship.pos[1][0] > 10:
-                ship.apply_gravity(self.gravity)
+            ship.apply_gravity(self.gravity)
+            if ship.pos[1][0] < 0:
+                ship.vel *= 0
+                ship.pos[1][0] = 0
 
     def _update_ships (self) -> None:
         for ship in self.ships:
