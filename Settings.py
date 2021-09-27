@@ -28,3 +28,19 @@ class Settings:
         # end 
         self.auto_max_landing_v = 3 
         self.manual_max_landing_v = 10
+
+        self.colors = {
+            "red" : (255, 0, 0),
+            "orange" : (255, 112, 0),
+            "yellow" : (255, 255, 0),
+            "white" : (255, 255, 255),
+        }
+    
+    def get_lower_color (self, color):
+        switcher = {
+            (255, 0, 0) : -1,
+            (255, 112, 0) : self.colors["red"],
+            (255, 255, 0) : self.colors["orange"],
+            (255, 255, 255) : self.colors["yellow"],
+        }
+        return switcher[color]
