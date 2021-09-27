@@ -1,22 +1,25 @@
-from typing import Dict
+from PID_Controller import PID
+from typing import List
+from Objects.Rocket import Rocket
 import numpy as np
 
+class Target:
+    def __init__(self, pos:np.ndarray, vel:np.ndarray) -> None:
+        self.pos = pos
+        self.vel = vel
+
 class AutoPilot:
-    def __init__(self) -> None:
-        self.landing_vel:np.ndarray = np.array([[0],[0]], float)
-
-        self.pos:np.ndarray = np.zeros((2,1), float)
-        self.vel:np.ndarray = np.zeros((2,1), float)
-        self.acc:np.ndarray = np.zeros((2,1), float)
-        self.thr:float = 0.0
+    def __init__(self, rocket:Rocket, goals:List[Target]) -> None:
+        self.rocket = rocket
     
-    def updateTelemetry(self, tlm:Dict) -> None:
-        self.pos = tlm["pos"]
-        self.vel = tlm["vel"]
-        self.acc = tlm["acc"]
+        self.goal = 0
+        self.goals = goals
 
-    def getThrust(self):
-        return self.thr
+        self.pid_y = PID(1, 1, 1)
 
-    def update(self):
-        self.thr = 1
+    def update(self, delta_time):
+        pid_y_val = self.pid_y.compute(self.rocket.pos[1][0], self.goals[self.goal].pos[1][0])
+        if pid_y_val < 0:
+            self.rocket.thrust = 1
+        else:
+            self.rocket.thrust = 0
