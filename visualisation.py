@@ -7,6 +7,10 @@ window = pyglet.window.Window(1000, 500)
 speedometer = pyglet.text.Label("Vy: {}".format(0.0),y=480)
 altimeter = pyglet.text.Label("Alt: {}".format(0.0),y=460)
 
+hundr_prc = pyglet.text.Label("100%", y=85)
+zero_prc = pyglet.text.Label("0%", x=20)
+thrustometer = pyglet.shapes.Rectangle(45, 0, 10, 0)
+
 ship = pyglet.shapes.Rectangle(500, 0, 2, 40)
 
 ships_data = {
@@ -24,9 +28,11 @@ def on_key_press(symbol, mod):
     if symbol == 119 and sim.ships[0].thrust < 1:
         sim.ships[0].thrust += 0.1
         sim.ships[0].thrust = round(sim.ships[0].thrust, 1)
+        thrustometer.height = 100 * sim.ships[0].thrust
     if symbol == 115 and sim.ships[0].thrust > 0:
         sim.ships[0].thrust -= 0.1
         sim.ships[0].thrust = round(sim.ships[0].thrust, 1)
+        thrustometer.height = 100 * sim.ships[0].thrust
     print(sim.ships[0].thrust)
 
 # @window.event
@@ -40,8 +46,13 @@ def on_key_press(symbol, mod):
 def on_draw():
     window.clear()
     ship.draw()
+
     speedometer.draw()
     altimeter.draw()
+
+    thrustometer.draw()
+    hundr_prc.draw()
+    zero_prc.draw()
 
 def update(dt):
     sim.run(dt)
