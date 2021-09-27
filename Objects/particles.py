@@ -13,7 +13,7 @@ class Particle:
     def update (self):
 
         self.pos += self.vel
-        self.vel *= 0.9 
+        self.vel = self.vel * 0.9 * self.size
 
 
     
