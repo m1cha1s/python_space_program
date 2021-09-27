@@ -8,10 +8,10 @@ window = pyglet.window.Window(1000, 500)
 speedometer = pyglet.text.Label("Vy: {}".format(0.0),y=480)
 altimeter = pyglet.text.Label("H: {}".format(0.0),y=400)
 
-ship = pyglet.shapes.Rectangle(500, 20, 2, 40)
+ship = pyglet.shapes.Rectangle(500, 0, 2, 40)
 
 ships_data = {
-    "pos" : np.array([[1000],[10]], float),
+    "pos" : np.array([[1000],[0]], float),
     "mass" : 3 * (10**6),
     "vel" : np.array([[0], [0]], float),
     "acc" : np.array([[0], [0]], float),
