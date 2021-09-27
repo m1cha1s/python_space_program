@@ -1,4 +1,3 @@
-from ctypes import alignment
 import pyglet
 import numpy as np
 from simulation import Simulation
@@ -6,7 +5,7 @@ from simulation import Simulation
 window = pyglet.window.Window(1000, 500)
 
 speedometer = pyglet.text.Label("Vy: {}".format(0.0),y=480)
-altimeter = pyglet.text.Label("H: {}".format(0.0),y=400)
+altimeter = pyglet.text.Label("Alt: {}".format(0.0),y=460)
 
 ship = pyglet.shapes.Rectangle(500, 0, 2, 40)
 
