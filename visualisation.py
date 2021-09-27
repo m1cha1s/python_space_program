@@ -1,4 +1,3 @@
-from ctypes import alignment
 import pyglet
 import numpy as np
 from simulation import Simulation
@@ -6,12 +5,12 @@ from simulation import Simulation
 window = pyglet.window.Window(1000, 500)
 
 speedometer = pyglet.text.Label("Vy: {}".format(0.0),y=480)
-altimeter = pyglet.text.Label("H: {}".format(0.0),y=400)
+altimeter = pyglet.text.Label("Alt: {}".format(0.0),y=460)
 
-ship = pyglet.shapes.Circle(500, 0, 10)
+ship = pyglet.shapes.Rectangle(500, 0, 2, 40)
 
 ships_data = [{
-    "pos" : np.array([[1000],[10]], float),
+    "pos" : np.array([[1000],[0]], float),
     "mass" : 3 * (10**6),
     "vel" : np.array([[0], [0]], float),
     "acc" : np.array([[0], [0]], float),
@@ -22,10 +21,12 @@ sim = Simulation(ships_params = ships_data)
 
 @window.event
 def on_key_press(symbol, mod):
-    if symbol == 119 and sim.ships[0].thrust < 0.9:
+    if symbol == 119 and sim.ships[0].thrust < 1:
         sim.ships[0].thrust += 0.1
-    if symbol == 115 and sim.ships[0].thrust > 0.1:
+        sim.ships[0].thrust = round(sim.ships[0].thrust, 1)
+    if symbol == 115 and sim.ships[0].thrust > 0:
         sim.ships[0].thrust -= 0.1
+        sim.ships[0].thrust = round(sim.ships[0].thrust, 1)
     print(sim.ships[0].thrust)
 
 # @window.event
