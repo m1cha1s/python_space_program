@@ -10,13 +10,13 @@ altimeter = pyglet.text.Label("H: {}".format(0.0),y=400)
 
 ship = pyglet.shapes.Circle(500, 0, 10)
 
-ships_data = {
+ships_data = [{
     "pos" : np.array([[1000],[10]], float),
     "mass" : 3 * (10**6),
     "vel" : np.array([[0], [0]], float),
     "acc" : np.array([[0], [0]], float),
     "angle" : 1,
-}
+}]
 
 sim = Simulation(ships_params = ships_data)
 

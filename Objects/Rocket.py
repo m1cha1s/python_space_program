@@ -9,8 +9,9 @@ class Rocket:
         self.angle = angle
         self.mass = mass
         self.thrust:float = 0.0 # 0 - 1
+        self.kinetic_energy = 0
 
-    def apply_thrust(self, power:np.ndarray):
+    def apply_thrust(self, power : np.ndarray):
         self.acc += (power/self.mass)*self.thrust
 
     def apply_force (self, force):
@@ -18,6 +19,10 @@ class Rocket:
 
     def apply_gravity(self, g):
         self.acc += g
+
+    def calc_kenergy (self):
+        sum_v = (self.vel[0]**2 + self.vel[0]**2)**(1/2)
+        self.kinetic_energy = self.mass * (sum_v**2) / 2
 
     def update (self, d_time):
         # print(self.acc)
