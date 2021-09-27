@@ -1,23 +1,54 @@
+from ctypes import alignment
 import pyglet
+import numpy as np
+from simulation import Simulation
 
 window = pyglet.window.Window(1000, 500)
 
+speedometer = pyglet.text.Label("Vy: {}".format(0.0),y=480)
+altimeter = pyglet.text.Label("H: {}".format(0.0),y=400)
+
 ship = pyglet.shapes.Circle(500, 0, 10)
+
+ships_data = {
+    "pos" : np.array([[1000],[10]], float),
+    "mass" : 3 * (10**6),
+    "vel" : np.array([[0], [0]], float),
+    "acc" : np.array([[0], [0]], float),
+    "angle" : 1,
+}
+
+sim = Simulation(ships_params = ships_data)
 
 @window.event
 def on_key_press(symbol, mod):
-    if symbol == 119:
-        pass # up
-    if symbol == 115:
-        pass # down
+    if symbol == 119 and sim.ships[0].thrust < 0.9:
+        sim.ships[0].thrust += 0.1
+    if symbol == 115 and sim.ships[0].thrust > 0.1:
+        sim.ships[0].thrust -= 0.1
+    print(sim.ships[0].thrust)
+
+# @window.event
+# def on_key_release(symbol, mod):
+#     if symbol == 119:
+#         # sim.ships[0].apply_force(np.array([[0],[35*(10**6)]], float))
+#     if symbol == 115:
+#         pass # down
 
 @window.event
 def on_draw():
     window.clear()
     ship.draw()
+    speedometer.draw()
+    altimeter.draw()
 
 def update(dt):
-    pass
+    sim.run(dt)
+    speedometer.text = "Vy: {} m/s".format(round(sim.ships[0].vel[1][0],4))
+    altimeter.text = "H: {} m".format(round(sim.ships[0].pos[1][0],4))
 
-pyglet.clock.schedule_interval(update, 0.1)
+    ship.x = sim.ships[0].pos[0][0]/2
+    ship.y = sim.ships[0].pos[1][0]/2
+
+pyglet.clock.schedule_interval(update, 0.00001)
 pyglet.app.run()

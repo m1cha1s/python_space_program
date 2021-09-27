@@ -8,12 +8,19 @@ class Rocket:
         self.vel = vel
         self.angle = angle
         self.mass = mass
-        self.thrust = 0 # 0 - 1
+        self.thrust:float = 0.0 # 0 - 1
+
+    def apply_thrust(self, power:np.ndarray):
+        self.acc += (power/self.mass)*self.thrust
 
     def apply_force (self, force):
-        self.acc = np.divide(force,self.mass)
+        self.acc += force / self.mass
+
+    def apply_gravity(self, g):
+        self.acc += g
 
     def update (self, d_time):
+        # print(self.acc)
         self.vel += self.acc * d_time
         self.pos += self.vel * d_time
         self.acc = np.zeros((2, 1))

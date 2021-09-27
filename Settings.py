@@ -10,7 +10,7 @@ class Settings:
     
     def __init__(self) -> None:
         # forces 
-        self.gravity = 9.8 
+        self.gravity = -9.8 
 
         # simulation setup 
         self.height = 1000
@@ -20,7 +20,7 @@ class Settings:
         self.ship_mass = 3 * (10 ** 6)
 
         # engines 
-        self.engine1 = (0, 35 * (10**6))
+        self.engine1 = 35 * (10**6)
 
         # start 
         self.start_h = 800
