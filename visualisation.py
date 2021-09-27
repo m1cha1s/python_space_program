@@ -1,3 +1,4 @@
+from autoPilot import AutoPilot, Target
 import pyglet
 import numpy as np
 from simulation import Simulation
@@ -23,17 +24,17 @@ ships_data = [{
 
 sim = Simulation(ships_params = ships_data)
 
+ao = AutoPilot(sim.ships[0], [Target(np.array([[0],[800]], float)), Target(np.array([[0],[0]], float))])
+
 @window.event
 def on_key_press(symbol, mod):
     if symbol == 119 and sim.ships[0].thrust < 1:
         sim.ships[0].thrust += 0.1
         sim.ships[0].thrust = round(sim.ships[0].thrust, 1)
-        thrustometer.height = 100 * sim.ships[0].thrust
     if symbol == 115 and sim.ships[0].thrust > 0:
         sim.ships[0].thrust -= 0.1
         sim.ships[0].thrust = round(sim.ships[0].thrust, 1)
-        thrustometer.height = 100 * sim.ships[0].thrust
-    print(sim.ships[0].thrust)
+    # print(sim.ships[0].thrust)
 
 # @window.event
 # def on_key_release(symbol, mod):
@@ -55,9 +56,11 @@ def on_draw():
     zero_prc.draw()
 
 def update(dt):
+    ao.update(dt)
     sim.run(dt)
     speedometer.text = "Vy: {} m/s".format(round(sim.ships[0].vel[1][0],4))
     altimeter.text = "H: {} m".format(round(sim.ships[0].pos[1][0],4))
+    thrustometer.height = 100 * sim.ships[0].thrust
 
     ship.x = sim.ships[0].pos[0][0]/2
     ship.y = sim.ships[0].pos[1][0]/2

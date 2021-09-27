@@ -11,6 +11,11 @@ class PID:
         
         self.e_sum = 0
 
+    def clear(self):
+        self.e = 0
+        self.e_prev = 0
+        self.e_sum = 0
+
     def compute(self, current, target, delta_time):
         self.e = target - current
 
