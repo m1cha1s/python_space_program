@@ -12,14 +12,16 @@ mode = "Auto"
 
 window = pyglet.window.Window(1000, 500)
 
-speedometer = pyglet.text.Label("Vy: {}".format(0.0),y=480)
-altimeter = pyglet.text.Label("Alt: {}".format(0.0),y=460)
+speedometer = pyglet.text.Label("Vx: {} Vy : {}".format(0.0, 0.0),y=480)
+altimeter = pyglet.text.Label("X: {} Alt: {}".format(0.0, 0.0),y=460)
+rocket_angle = pyglet.text.Label("Rocket angle: {} Engine angle: {} deg".format(0.0, 0.0),y=440)
+fuel_indicator = pyglet.text.Label("Ramaining fuel (engine #1): {}%".format(100),y=420)
 
 mode_indicator = pyglet.text.Label("Mode: {}".format(mode), x=880, y=480)
 phase_indicator = pyglet.text.Label("Phase {}".format(None), x=880, y=460)
 
-apogee_label = pyglet.text.Label("Apogee: {}".format(None), y=440)
-landing_speed_label = pyglet.text.Label("Landing speed: {}".format(None), y=420)
+apogee_label = pyglet.text.Label("Apogee: {}".format(None), y=400)
+landing_speed_label = pyglet.text.Label("Landing speed: {}".format(None), y=380)
 
 hundr_prc = pyglet.text.Label("100%", y=85)
 zero_prc = pyglet.text.Label("0%", x=20)
@@ -43,14 +45,14 @@ ao = AutoPilot(sim.ships[0], [Target(np.array([[0],[800]], float)), Target(np.ar
 def on_key_press(symbol, mod):
     mode = "Manual"
     if mode == "Manual":
-        if symbol == key.W and sim.ships[0].engine.throttle <= 0.9:
-            sim.ships[0].engine.change_throttle(1)
-        if symbol == key.S and sim.ships[0].engine.throttle >= 0.1:
-            sim.ships[0].engine.change_throttle(-1)
-        if symbol == key.A and sim.ships[0].engine.angle < 30:
-            sim.ships[0].engine.angle += 5
-        if symbol == key.D and sim.ships[0].engine.angle > -30:
-            sim.ships[0].engine.angle -= 5
+        if symbol == key.W and sim.ships[0].engines[0].throttle <= 0.9:
+            sim.ships[0].engines[0].change_throttle(1)
+        if symbol == key.S and sim.ships[0].engines[0].throttle >= 0.1:
+            sim.ships[0].engines[0].change_throttle(-1)
+        if symbol == key.A and sim.ships[0].engines[0].angle < 30:
+            sim.ships[0].engines[0].angle += 5
+        if symbol == key.D and sim.ships[0].engines[0].angle > -30:
+            sim.ships[0].engines[0].angle -= 5
 
 # @window.event
 # def on_key_release(symbol, mod):
@@ -69,6 +71,8 @@ def on_draw():
     
     speedometer.draw()
     altimeter.draw()
+    rocket_angle.draw()
+    fuel_indicator.draw()
 
     mode_indicator.draw()
     phase_indicator.draw()
@@ -83,9 +87,12 @@ def update(dt):
     # ao.update(dt)
     sim.run(dt)
     #pman.update_particles(dt)
-    speedometer.text = "Vy: {} m/s".format(round(sim.ships[0].vel[1][0],4))
-    altimeter.text = "H: {} m".format(round(sim.ships[0].pos[1][0],4))
-    thrustometer.height = 100 * sim.ships[0].engine.throttle
+    speedometer.text = "Vx: {} Vy: {} m/s".format(round(sim.ships[0].vel[0][0],4), round(sim.ships[0].vel[1][0],4))
+    altimeter.text = "X: {} H: {} m".format(round(sim.ships[0].pos[0][0],4), round(sim.ships[0].pos[1][0],4))
+    rocket_angle.text = "Rocket angle: {} Engine angle: {} deg".format(round(sim.ships[0].rotation_angle,4), round(sim.ships[0].engines[0].angle,4))
+    fuel_indicator.text = "Ramaining fuel (engine #1): {}%".format(round(sim.ships[0].fuel_percentage, 2))
+    thrustometer.height = 100 * sim.ships[0].engines[0].throttle
+
 
     apogee_label.text = "Apogee: {}".format(ao.apogee)
     landing_speed_label.text = "Landing speed: {}".format(ao.landingSpeed)
@@ -94,7 +101,7 @@ def update(dt):
 
     ship.x = sim.ships[0].pos[0][0]/2
     ship.y = sim.ships[0].pos[1][0]/2
-    ship.rotation = sim.ships[0].rotation_angle + 90
+    ship.rotation = sim.ships[0].rotation_angle - 90
 
 s = Settings()
 pman = ParticleMenager(s, np.array([[500], [100]]), 100, (30, 60))

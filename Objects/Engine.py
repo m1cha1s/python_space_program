@@ -44,7 +44,6 @@ class Engine:
         self.d_time = d_time
         self.apply_force()
         self.rotational_force =  math.sin(math.radians(self.angle)) * self.force
-        self.rocket.apply_rotational_force (self.rotational_force, self.distance_to_center_of_mass, self.d_time)
         self.update_fuel()
-        return self.acc, self.fuel_mass
+        return self.acc, self.fuel_mass, self.rotational_force, self.distance_to_center_of_mass
         
