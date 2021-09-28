@@ -4,9 +4,9 @@ from Objects.Rocket import Rocket
 import numpy as np
 
 class Target:
-    def __init__(self, pos:np.ndarray) -> None:
+    def __init__(self, pos:np.ndarray, vel:np.ndarray = np.zeros((2,1), float)) -> None:
         self.pos = pos
-        # self.vel = vel
+        self.vel = vel
 
 class AutoPilot:
     def __init__(self, rocket:Rocket, goals:List[Target]) -> None:
@@ -15,23 +15,35 @@ class AutoPilot:
         self.goal = 0
         self.goals = goals
 
-        self.pid_y = PID(5.9, 0.002, 0.45)
-        self.pid_vy = PID(1, 0, 0)
+        self.pid_y =  PID(1, 0.029, 1, 1000, 0) # Calibrated NO TOUCHY
+        self.pid_Vy = PID(40, 1, 1, 1000, 0)   # Calibrated NO TOUCHY
 
         self.trig = 800
 
+        self.pid_y_val = 0
+
+        self.complete = False
+
     def update(self, delta_time):
         if self.goal < len(self.goals):
-            pid_y_val = self.pid_y.compute(self.rocket.pos[1][0], self.goals[self.goal].pos[1][0], delta_time)
-            # print(pid_y_val)
-            if pid_y_val > self.trig:
-                self.rocket.thrust = 1
-            else:
-                self.rocket.thrust = 0
+            self.pid_y_val = self.pid_y.compute(self.rocket.pos[1][0], self.goals[self.goal].pos[1][0], delta_time)
+            self.pid_y_val += self.pid_Vy.compute(self.rocket.vel[1][0], self.goals[self.goal].vel[1][0], delta_time)
+
+            thrust = self.pid_y_val/1000
+
+            if thrust > 1:
+                thrust = 1
+            if thrust < 0:
+                thrust = 0
+
+            self.rocket.thrust = thrust
+            
             if self.rocket.pos[1][0] <= self.goals[self.goal].pos[1][0] + 5 and self.rocket.pos[1][0] >= self.goals[self.goal].pos[1][0] - 5:
                 self.trig *= -1
                 # self.pid_y.clear()
                 self.goal += 1
-        else:
+        elif not self.complete:
             self.rocket.thrust = 0
             print("Flight plan complete!!!")
+            print("Landing V: {}".format(self.rocket.vel[1][0]))
+            self.complete = True

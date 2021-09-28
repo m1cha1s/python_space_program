@@ -20,13 +20,15 @@ ao = AutoPilot(sim.ships[0], [Target(np.array([[0],[800]], float)), Target(np.ar
 
 y = []
 vy = []
+thr = []
 t = []
 zero = []
 targets = []
 
-while time < 80 :
+while time < 500 :
     ao.update(dt)
     sim.run(dt)
+    thr.append(ao.pid_y_val)
     y.append(sim.ships[0].pos[1][0])
     vy.append(sim.ships[0].vel[1][0])
     zero.append(0)
@@ -38,4 +40,5 @@ plt.plot(t, zero)
 plt.plot(t, y)
 plt.plot(t, vy)
 plt.plot(t, targets)
+plt.plot(t, thr)
 plt.show()
