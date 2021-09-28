@@ -1,6 +1,10 @@
+from autoPilot import AutoPilot, Target
 import pyglet
 import numpy as np
 from simulation import Simulation
+from Objects.particles import ParticleMenager
+from Settings import Settings
+import time
 
 window = pyglet.window.Window(1000, 500)
 
@@ -23,17 +27,17 @@ ships_data = [{
 
 sim = Simulation(ships_params = ships_data)
 
+ao = AutoPilot(sim.ships[0], [Target(np.array([[0],[800]], float)), Target(np.array([[0],[0]], float))])
+
 @window.event
 def on_key_press(symbol, mod):
     if symbol == 119 and sim.ships[0].thrust < 1:
         sim.ships[0].thrust += 0.1
         sim.ships[0].thrust = round(sim.ships[0].thrust, 1)
-        thrustometer.height = 100 * sim.ships[0].thrust
     if symbol == 115 and sim.ships[0].thrust > 0:
         sim.ships[0].thrust -= 0.1
         sim.ships[0].thrust = round(sim.ships[0].thrust, 1)
-        thrustometer.height = 100 * sim.ships[0].thrust
-    print(sim.ships[0].thrust)
+    # print(sim.ships[0].thrust)
 
 # @window.event
 # def on_key_release(symbol, mod):
@@ -47,20 +51,30 @@ def on_draw():
     window.clear()
     ship.draw()
 
+    
     speedometer.draw()
     altimeter.draw()
 
     thrustometer.draw()
     hundr_prc.draw()
     zero_prc.draw()
+    pman.draw_particles()
+
 
 def update(dt):
+    ao.update(dt)
     sim.run(dt)
+    pman.update_particles(dt)
     speedometer.text = "Vy: {} m/s".format(round(sim.ships[0].vel[1][0],4))
     altimeter.text = "H: {} m".format(round(sim.ships[0].pos[1][0],4))
+    thrustometer.height = 100 * sim.ships[0].thrust
 
     ship.x = sim.ships[0].pos[0][0]/2
     ship.y = sim.ships[0].pos[1][0]/2
+
+s = Settings()
+pman = ParticleMenager(s, np.array([[500], [100]]), 100, (30, 60))
+pman.spawn_particles()
 
 pyglet.clock.schedule_interval(update, 0.00001)
 pyglet.app.run()
