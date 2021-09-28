@@ -22,7 +22,7 @@ ships_data = [{
     "mass" : 3 * (10**6),
     "vel" : np.array([[0], [0]], float),
     "acc" : np.array([[0], [0]], float),
-    "angle" : 1,
+    "angle" : 90,
 }]
 
 sim = Simulation(ships_params = ships_data)
@@ -31,15 +31,12 @@ ao = AutoPilot(sim.ships[0], [Target(np.array([[0],[800]], float)), Target(np.ar
 
 @window.event
 def on_key_press(symbol, mod):
-    if symbol == 119 and sim.ships[0].thrust < 1:
-        sim.ships[0].update_thrust(0.1)
-        # sim.ships[0].thrust += 0.1
-        # sim.ships[0].thrust = round(sim.ships[0].thrust, 1)
-    if symbol == 115 and sim.ships[0].thrust > 0:
-        sim.ships[0].update_thrust(-0.1)
-        # sim.ships[0].thrust -= 0.1
-        # sim.ships[0].thrust = round(sim.ships[0].thrust, 1)
-    # print(sim.ships[0].thrust)
+    mode = "Manual"
+    if mode == "Manual":
+        if symbol == 119 and sim.ships[0].engine.throttle <= 0.9:
+            sim.ships[0].engine.change_throttle(1)
+        if symbol == 115 and sim.ships[0].engine.throttle >= 0.1:
+            sim.ships[0].engine.change_throttle(-1)
 
 # @window.event
 # def on_key_release(symbol, mod):
@@ -66,10 +63,10 @@ def on_draw():
 def update(dt):
     #ao.update(dt)
     sim.run(dt)
-    pman.update_particles(dt)
+    #pman.update_particles(dt)
     speedometer.text = "Vy: {} m/s".format(round(sim.ships[0].vel[1][0],4))
     altimeter.text = "H: {} m".format(round(sim.ships[0].pos[1][0],4))
-    thrustometer.height = 100 * sim.ships[0].thrust
+    thrustometer.height = 100 * sim.ships[0].engine.throttle
 
     ship.x = sim.ships[0].pos[0][0]/2
     ship.y = sim.ships[0].pos[1][0]/2

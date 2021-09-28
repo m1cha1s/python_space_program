@@ -1,4 +1,5 @@
 import numpy as np
+from .Engine import Engine
 
 class Rocket:
 
@@ -8,45 +9,34 @@ class Rocket:
         self.vel = vel
         self.angle = angle
         self.mass = mass
-        self.thrust:float = 0.0 # 0 - 1
         self.kinetic_energy = 0
         self.settings = settings
-        self.fuel_mass = self.mass * self.settings.fuel_percentage
-        self.is_fuel = True
-        self.engines = np.array([[0],[self.settings.engine1]], float)
+        self.fuel_mass : float = self.mass * self.settings.fuel_percentage 
+        self.engine = Engine(self, self.settings.engine1, 90, 5000, self.fuel_mass)
+        self.static_forces = [self.settings.gravity]
 
-    def apply_thrust(self):
-        self.acc += (self.engines / self.mass)*self.thrust
-
-    def update_thrust (self, n):
-        self.thrust += n 
-        self.thrust = round(self.thrust, 1)
-
-    def apply_force (self, force):
-        self.acc += force / self.mass
-
-    def apply_gravity(self, g):
-        self.acc += g
+    def apply_static_forces(self, d_time):
+        for static_force in self.static_forces:
+            if self.pos[1][0] > 0:
+                self.acc += static_force
 
     def calc_kenergy (self):
         sum_v = (self.vel[0][0]**2 + self.vel[1][0]**2)**(1/2)
         self.kinetic_energy = self.mass * (sum_v**2) / 2
 
-    def update_fuel (self, d_time):
-        burned_fuel = self.settings.fuel_burned_per_s * d_time * self.thrust
-        if self.fuel_mass - burned_fuel > 0:
-            self.fuel_mass -= burned_fuel
-            self.mass -= burned_fuel
-        
-        else:
-            self.is_fuel = False
-        
-        print(self.fuel_mass)
-
+    def check_high (self):
+        if self.pos[1][0] < 0:
+            self.vel *= 0
+            self.pos[1][0] = 0
+    
     def update (self, d_time):
-        # print(self.acc)
-        self.update_fuel(d_time)
+        self.acc_engines, self.fuel_mass = self.engine.update(d_time)
+        self.acc += self.acc_engines
+
         self.vel += self.acc * d_time
         self.pos += self.vel * d_time
+
         self.acc = np.zeros((2, 1))
+
+        self.check_high()
 
