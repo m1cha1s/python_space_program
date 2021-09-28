@@ -1,5 +1,6 @@
 from autoPilot import AutoPilot, Target
 import pyglet
+from pyglet.window import key
 import numpy as np
 from simulation import Simulation
 from Objects.particles import ParticleMenager
@@ -42,10 +43,14 @@ ao = AutoPilot(sim.ships[0], [Target(np.array([[0],[800]], float)), Target(np.ar
 def on_key_press(symbol, mod):
     mode = "Manual"
     if mode == "Manual":
-        if symbol == 119 and sim.ships[0].engine.throttle <= 0.9:
+        if symbol == key.W and sim.ships[0].engine.throttle <= 0.9:
             sim.ships[0].engine.change_throttle(1)
-        if symbol == 115 and sim.ships[0].engine.throttle >= 0.1:
+        if symbol == key.S and sim.ships[0].engine.throttle >= 0.1:
             sim.ships[0].engine.change_throttle(-1)
+        if symbol == key.A and sim.ships[0].engine.angle < 30:
+            sim.ships[0].engine.angle += 5
+        if symbol == key.D and sim.ships[0].engine.angle > -30:
+            sim.ships[0].engine.angle -= 5
 
 # @window.event
 # def on_key_release(symbol, mod):
@@ -75,7 +80,7 @@ def on_draw():
 
 
 def update(dt):
-    ao.update(dt)
+    # ao.update(dt)
     sim.run(dt)
     #pman.update_particles(dt)
     speedometer.text = "Vy: {} m/s".format(round(sim.ships[0].vel[1][0],4))
@@ -89,6 +94,7 @@ def update(dt):
 
     ship.x = sim.ships[0].pos[0][0]/2
     ship.y = sim.ships[0].pos[1][0]/2
+    ship.rotation = sim.ships[0].rotation_angle + 90
 
 s = Settings()
 pman = ParticleMenager(s, np.array([[500], [100]]), 100, (30, 60))

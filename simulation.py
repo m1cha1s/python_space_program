@@ -21,7 +21,7 @@ class Simulation:
 
     def _update_ships (self) -> None:
         for ship in self.ships:
-            ship.apply_static_forces(self.d_time)
+            ship.apply_static_forces()
             ship.update(self.d_time)
 
     def run (self, d_time) -> None:

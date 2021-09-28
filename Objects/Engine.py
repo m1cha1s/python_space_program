@@ -13,6 +13,7 @@ class Engine:
         self.throttle_step = throttle_step
         self.throttle = 0
         self.is_active = True
+        self.distance_to_center_of_mass = 20
 
     def change_throttle (self, sign):
         self.throttle += sign * self.throttle_step
@@ -33,8 +34,8 @@ class Engine:
         if not self.is_active:
             return 
         self.force = self.max_power * self.throttle / self.rocket.mass
-        ax = round(math.cos(math.radians(self.angle)) * self.force, 2)
-        ay = round(math.sin(math.radians(self.angle)) * self.force, 2)
+        ax = round(math.cos(math.radians(self.angle + self.rocket.rotation_angle)) * self.force, 2)
+        ay = round(math.sin(math.radians(self.angle + self.rocket.rotation_angle)) * self.force, 2)
         
         self.acc = np.array([[ax],[ay]], float)
         
@@ -42,6 +43,8 @@ class Engine:
     def update (self, d_time):
         self.d_time = d_time
         self.apply_force()
+        self.rotational_force =  math.sin(math.radians(self.angle)) * self.force
+        self.rocket.apply_rotational_force (self.rotational_force, self.distance_to_center_of_mass, self.d_time)
         self.update_fuel()
         return self.acc, self.fuel_mass
         
