@@ -11,12 +11,12 @@ class Simulation:
         self.settings = Settings()
         self.gravity = np.array([[0],[self.settings.gravity]], float)
         for i in range (num_of_ships):
-            self.ships.append(Rocket(ships_params[i]["pos"], ships_params[i]["mass"], ships_params[i]["vel"], ships_params[i]["acc"], ships_params[i]["angle"]))
+            self.ships.append(Rocket(self.settings, ships_params[i]["pos"], ships_params[i]["mass"], ships_params[i]["vel"], ships_params[i]["acc"], ships_params[i]["angle"]))
 
     def _apply_forces_to_ships (self):
         for i, ship in enumerate(self.ships):
             ship.apply_force(self.forces[i])
-            ship.apply_thrust(np.array([[0],[self.settings.engine1]], float))
+            ship.apply_thrust()
             ship.apply_gravity(self.gravity)
             if ship.pos[1][0] < 0:
                 ship.vel *= 0

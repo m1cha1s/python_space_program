@@ -32,11 +32,13 @@ ao = AutoPilot(sim.ships[0], [Target(np.array([[0],[800]], float)), Target(np.ar
 @window.event
 def on_key_press(symbol, mod):
     if symbol == 119 and sim.ships[0].thrust < 1:
-        sim.ships[0].thrust += 0.1
-        sim.ships[0].thrust = round(sim.ships[0].thrust, 1)
+        sim.ships[0].update_thrust(0.1)
+        # sim.ships[0].thrust += 0.1
+        # sim.ships[0].thrust = round(sim.ships[0].thrust, 1)
     if symbol == 115 and sim.ships[0].thrust > 0:
-        sim.ships[0].thrust -= 0.1
-        sim.ships[0].thrust = round(sim.ships[0].thrust, 1)
+        sim.ships[0].update_thrust(-0.1)
+        # sim.ships[0].thrust -= 0.1
+        # sim.ships[0].thrust = round(sim.ships[0].thrust, 1)
     # print(sim.ships[0].thrust)
 
 # @window.event
@@ -62,7 +64,7 @@ def on_draw():
 
 
 def update(dt):
-    ao.update(dt)
+    #ao.update(dt)
     sim.run(dt)
     pman.update_particles(dt)
     speedometer.text = "Vy: {} m/s".format(round(sim.ships[0].vel[1][0],4))
