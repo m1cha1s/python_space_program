@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 
 class Settings:
 
@@ -18,16 +18,18 @@ class Settings:
 
         # ship 
         self.ship_mass = 3 * (10 ** 6)
+        self.fuel_percentage = 0.85 # od 0 do 1 
+        self.fuel_burned_per_s = 4989.5 * 10 # s
 
         # engines 
-        self.engine1 = 35 * (10**6)
+        self.engine1 =  35 * (10**6)
 
         # start 
         self.start_h = 800
 
         # end 
         self.auto_max_landing_v = 3 
-        self.manual_max_landing_v = 10
+        self.manual_max_landing_v = 10 
 
         self.colors = {
             "red" : (255, 0, 0),
