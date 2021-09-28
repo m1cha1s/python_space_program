@@ -19,7 +19,7 @@ class Settings:
         # ship 
         self.ship_mass = 3 * (10 ** 6)
         self.fuel_percentage = 0.85 # od 0 do 1 
-        self.fuel_burned_per_s = 4989.5 * 10 # s
+        self.fuel_burned_per_s = 4989.5 * 1 # s
 
         # engines 
         self.engine1 =  35 * (10**6)

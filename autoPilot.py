@@ -20,8 +20,8 @@ class AutoPilot:
         self.goal = 0
         self.goals = goals
 
-        self.pid_y =  PID(1, 0.029, 1, 1000, 0) # Calibrated NO TOUCHY
-        self.pid_Vy = PID(40, 1, 1, 1000, 0)   # Calibrated NO TOUCHY
+        self.pid_y =  PID(1, 0.029, 100, 1000, 0) # Calibrated NO TOUCHY
+        self.pid_Vy = PID(40, 0.8, 100, 1000, 0)   # Calibrated NO TOUCHY
 
         self.trig = 800
 
@@ -31,7 +31,10 @@ class AutoPilot:
 
         self.time = 0
 
-        self.logger = Logger("FlightLog_{}.csv".format(datetime.now))
+        self.landingSpeed = None
+        self.apogee = None
+
+        self.logger = Logger("logs/FlightLog_{}.csv".format(datetime.now()))
 
     def update(self, delta_time):
         self.logger.log([self.time, 
@@ -41,6 +44,8 @@ class AutoPilot:
                          self.rocket.thrust,
                          self.rocket.angle,
                          ])
+        if round(self.rocket.vel[1][0]) == 0:
+            self.apogee = self.rocket.pos[1][0]
         if self.mode == "Auto" :
             if self.goal < len(self.goals):
                 self.pid_y_val = self.pid_y.compute(self.rocket.pos[1][0], self.goals[self.goal].pos[1][0], delta_time)
@@ -62,7 +67,8 @@ class AutoPilot:
             elif not self.complete:
                 self.rocket.thrust = 0
                 print("Flight plan complete!!!")
-                print("Landing V: {}".format(self.rocket.vel[1][0]))
+                self.landingSpeed = self.rocket.vel[1][0]
+                print("Landing V: {}".format(self.landingSpeed))
                 self.complete = True
         elif self.mode == "Manual":
             pass
