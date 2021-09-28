@@ -21,7 +21,7 @@ class Rocket:
         self.acc += g
 
     def calc_kenergy (self):
-        sum_v = (self.vel[0]**2 + self.vel[0]**2)**(1/2)
+        sum_v = (self.vel[0][0]**2 + self.vel[1][0]**2)**(1/2)
         self.kinetic_energy = self.mass * (sum_v**2) / 2
 
     def update (self, d_time):
