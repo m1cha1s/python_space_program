@@ -57,7 +57,7 @@ class Engine:
         phi += math.radians(self.rocket.rotation_angle)
         x, y = pol2cart(rho, phi)
 
-        print(rho, math.degrees(phi), y)
+        # print(rho, math.degrees(phi), y)
 
         # print(x, y)
 
