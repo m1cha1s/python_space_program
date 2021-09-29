@@ -44,22 +44,11 @@ class Engine:
         if not self.is_active:
             return 
         self.force = self.max_power * self.throttle / self.rocket.mass
-        # ax = round(math.cos(math.radians(self.angle + self.rocket.rotation_angle)) * self.force, 2)
         ay = round(math.sin(math.radians(self.angle+90)) * self.force, 2)
-
-
-        
-        # self.acc = np.array([[0],[ay]], float)
-
-        # print(self.angle, ay)
 
         rho, phi = cart2pol(0, ay)
         phi += math.radians(self.rocket.rotation_angle)
         x, y = pol2cart(rho, phi)
-
-        print(rho, math.degrees(phi), y)
-
-        # print(x, y)
 
         self.acc = np.array([[-x], [y]], float)
         
