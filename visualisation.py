@@ -34,7 +34,7 @@ ships_data = [{
     "mass" : 3 * (10**6),
     "vel" : np.array([[0], [0]], float),
     "acc" : np.array([[0], [0]], float),
-    "angle" : 90,
+    "angle" : 0,
 }]
 
 sim = Simulation(ships_params = ships_data)
@@ -49,10 +49,10 @@ def on_key_press(symbol, mod):
             sim.ships[0].engines[0].change_throttle(1)
         if symbol == key.S and sim.ships[0].engines[0].throttle >= 0.1:
             sim.ships[0].engines[0].change_throttle(-1)
-        if symbol == key.A and sim.ships[0].engines[0].angle < 30:
-            sim.ships[0].engines[0].angle += 5
-        if symbol == key.D and sim.ships[0].engines[0].angle > -30:
+        if symbol == key.A and sim.ships[0].engines[0].angle > -90:
             sim.ships[0].engines[0].angle -= 5
+        if symbol == key.D and sim.ships[0].engines[0].angle < 90:
+            sim.ships[0].engines[0].angle += 5
 
 # @window.event
 # def on_key_release(symbol, mod):
@@ -101,7 +101,7 @@ def update(dt):
 
     ship.x = sim.ships[0].pos[0][0]/2
     ship.y = sim.ships[0].pos[1][0]/2
-    ship.rotation = sim.ships[0].rotation_angle - 90
+    ship.rotation = sim.ships[0].rotation_angle
 
 s = Settings()
 pman = ParticleMenager(s, np.array([[500], [100]]), 100, (30, 60))

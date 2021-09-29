@@ -22,7 +22,7 @@ class Settings:
         self.fuel_burned_per_s = 4989.5 # s
 
         # engines 
-        self.engine1 =  35 * (10**6)
+        self.engine1 =  35 * (10**6)*2
 
         self.colors = {
             "red" : (255, 0, 0),

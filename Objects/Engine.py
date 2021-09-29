@@ -1,6 +1,16 @@
 import numpy as np
 import math
 
+def cart2pol(x, y):
+    rho = np.sqrt(x**2 + y**2)
+    phi = np.arctan2(y, x)
+    return(rho, phi)
+
+def pol2cart(rho, phi):
+    x = rho * np.cos(phi)
+    y = rho * np.sin(phi)
+    return(x, y)
+
 class Engine:
 
     def __init__(self, rocket, max_power, angle, fuel_burned_per_s, fuel_mass, throttle_step = 0.1,) -> None:
@@ -34,10 +44,24 @@ class Engine:
         if not self.is_active:
             return 
         self.force = self.max_power * self.throttle / self.rocket.mass
-        ax = round(math.cos(math.radians(self.angle + self.rocket.rotation_angle)) * self.force, 2)
-        ay = round(math.sin(math.radians(self.angle + self.rocket.rotation_angle)) * self.force, 2)
+        # ax = round(math.cos(math.radians(self.angle + self.rocket.rotation_angle)) * self.force, 2)
+        ay = round(math.sin(math.radians(self.angle+90)) * self.force, 2)
+
+
         
-        self.acc = np.array([[ax],[ay]], float)
+        # self.acc = np.array([[0],[ay]], float)
+
+        # print(self.angle, ay)
+
+        rho, phi = cart2pol(0, ay)
+        phi += math.radians(self.rocket.rotation_angle)
+        x, y = pol2cart(rho, phi)
+
+        print(rho, math.degrees(phi), y)
+
+        # print(x, y)
+
+        self.acc = np.array([[-x], [y]], float)
         
 
     def update (self, d_time):
