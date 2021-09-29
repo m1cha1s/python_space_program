@@ -21,11 +21,11 @@ class AutoPilot:
         self.goal = 0
         self.goals = goals
 
-        self.pid_y =  PID(1, 0.029, 100, 1000, 0) # Calibrated NO TOUCHY
-        self.pid_Vy = PID(40, 0.8, 100, 1000, 0)   # Calibrated NO TOUCHY
+        self.pid_y =  PID(3, 0.02, 5000, 1000, 0) # Calibrated NO TOUCHY
+        self.pid_Vy = PID(4, 0.3, 1, 1000, 0)   # Calibrated NO TOUCHY
 
-        self.pid_x = PID(1, 0, 0, 1000, -1000)
-        self.pid_Vx = PID(1, 0, 0, 1000, -1000)
+        self.pid_x = PID(1, 0.01, 1, 1000, -1000)
+        self.pid_Vx = PID(10, 0.5, 50, 1000, -1000)
 
         self.pid_y_val = 0
         self.pid_x_val = 0
@@ -54,7 +54,7 @@ class AutoPilot:
                 self.pid_y_val = self.pid_y.compute(self.rocket.pos[1][0], self.goals[self.goal].pos[1][0], delta_time)
                 self.pid_y_val += self.pid_Vy.compute(self.rocket.vel[1][0], self.goals[self.goal].vel[1][0], delta_time)
 
-                thr_y = self.pid_y_val/1000
+                thr_y = self.pid_y_val/1000 * (self.rocket.mass/self.rocket.starting_mass)
 
                 if thr_y > 1:
                     thr_y = 1
@@ -62,9 +62,9 @@ class AutoPilot:
                     thr_y = 0
 
                 self.pid_x_val = self.pid_x.compute(self.rocket.pos[0][0], self.goals[self.goal].pos[0][0], delta_time)
-                self.pid_x_val = self.pid_Vx.compute(self.rocket.vel[0][0], self.goals[self.goal].vel[0][0], delta_time)
+                self.pid_x_val += self.pid_Vx.compute(self.rocket.vel[0][0], self.goals[self.goal].vel[0][0], delta_time)
 
-                thr_x = self.pid_x_val/1000
+                thr_x = self.pid_x_val/1000 * (self.rocket.mass/self.rocket.starting_mass)
 
                 thr_x_l = 0
                 thr_x_r = 0
@@ -82,7 +82,7 @@ class AutoPilot:
                 self.rocket.engines[1].throttle = thr_x_r
                 self.rocket.engines[2].throttle = thr_x_l
                 
-                if self.rocket.pos[1][0] <= self.goals[self.goal].pos[1][0] + 5 and self.rocket.pos[1][0] >= self.goals[self.goal].pos[1][0] - 5:
+                if (self.rocket.pos[1][0] <= self.goals[self.goal].pos[1][0] + 5) and (self.rocket.pos[1][0] >= self.goals[self.goal].pos[1][0] - 5) and (self.rocket.pos[0][0] <= self.goals[self.goal].pos[0][0] + 5) and (self.rocket.pos[0][0] >= self.goals[self.goal].pos[0][0] - 5) :
                     self.goal += 1
             elif not self.complete:
                 self.rocket.engines[0].throttle = 0
