@@ -16,11 +16,18 @@ class Rocket:
         self.rotational_speed = 0
         self.rotation_angle = angle
 
-        self.fuel_mass : float = self.mass * self.settings.fuel_percentage 
+        self.fuel_percentage_left = 0.5 # 0 - 1
+        self.fuel_mass : float = self.mass * self.settings.fuel_percentage * self.fuel_percentage_left
+        self.ship_mass = (1 - self.settings.fuel_percentage) * self.mass
         self.engines = [Engine(self, self.settings.engine1, 0, 5000, self.fuel_mass)]
         self.static_forces = [self.settings.gravity]
 
-        self.fuel_percentage = 50
+        self.starting_mass = self.ship_mass + self.fuel_mass
+        self.starting_fuel_mass = self.mass * self.settings.fuel_percentage 
+        self.mass = self.starting_mass
+
+    def update_mass (self):
+        self.fuel_mass -= self.fuel_mass_burned
 
     def apply_static_forces(self):
         for static_force in self.static_forces:
@@ -44,8 +51,9 @@ class Rocket:
     
     def update (self, d_time):
         for engine in self.engines:
-            self.acc_engines, self.fuel_mass, self.rotation_force, self.distance_to_center_of_mass = engine.update(d_time)
+            self.acc_engines, self.fuel_mass_burned, self.rotation_force, self.distance_to_center_of_mass = engine.update(d_time)
             self.apply_rotational_force()
+            self.update_mass()
 
         self.rotational_speed += self.rotation_acc * d_time
         self.rotation_angle += self.rotational_speed * d_time
@@ -64,5 +72,5 @@ class Rocket:
 
         self.check_high()
 
-        self.fuel_percentage = self.fuel_mass / (self.settings.ship_mass * self.settings.fuel_percentage) * 100
-
+        self.mass = self.ship_mass + self.fuel_mass
+        self.fuel_percentage_left = self.fuel_mass / self.starting_fuel_mass

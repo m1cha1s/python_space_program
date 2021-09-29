@@ -7,8 +7,8 @@ from Objects.particles import ParticleMenager
 from Settings import Settings
 import time
 
-mode = "Auto"
-# mode = "Manual"
+# mode = "Auto"
+mode = "Manual"
 
 window = pyglet.window.Window(1000, 500)
 
@@ -40,7 +40,8 @@ ships_data = [{
 sim = Simulation(ships_params = ships_data)
 
 ao = AutoPilot(sim.ships[0], [Target(np.array([[0],[800]], float), np.zeros((2,1), float)), 
-                              Target(np.array([[0],[0]], float), np.zeros((2,1), float))])
+                              Target(np.array([[0],[0]], float), np.zeros((2,1), float))],
+                              mode)
 
 @window.event
 def on_key_press(symbol, mod):
@@ -85,13 +86,13 @@ def on_draw():
 
 
 def update(dt):
-    # ao.update(dt)
+    ao.update(dt)
     sim.run(dt)
     #pman.update_particles(dt)
     speedometer.text = "Vx: {} Vy: {} m/s".format(round(sim.ships[0].vel[0][0],4), round(sim.ships[0].vel[1][0],4))
     altimeter.text = "X: {} H: {} m".format(round(sim.ships[0].pos[0][0],4), round(sim.ships[0].pos[1][0],4))
     rocket_angle.text = "Rocket angle: {} Engine angle: {} deg".format(round(sim.ships[0].rotation_angle,4), round(sim.ships[0].engines[0].angle,4))
-    fuel_indicator.text = "Ramaining fuel (engine #1): {}%".format(round(sim.ships[0].fuel_percentage, 2))
+    fuel_indicator.text = "Ramaining fuel (engine #1): {}%".format(round(sim.ships[0].fuel_percentage_left * 100, 2))
     thrustometer.height = 100 * sim.ships[0].engines[0].throttle
 
 

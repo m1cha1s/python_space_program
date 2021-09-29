@@ -19,7 +19,6 @@ class Engine:
         self.force = 0
         self.angle = angle
         self.fuel_burned_per_s = fuel_burned_per_s
-        self.fuel_mass = fuel_mass
         self.throttle_step = throttle_step
         self.throttle = 0
         self.is_active = True
@@ -30,29 +29,19 @@ class Engine:
 
     def change_angle (self, angle):
         self.angle = angle
-
-    def update_fuel (self):
-        self.fuel_mass -= self.fuel_burned_per_s * self.throttle * self.d_time
-
-        self.rocket.mass -= self.fuel_burned_per_s * self.throttle * self.d_time
-
-        if self.fuel_mass < 0:
-            self.fuel_mass = 0
-            self.is_active = False
+    
+    def calc_fuel_burned (self):
+        self.fuel_burned = self.d_time * self.throttle * self.fuel_burned_per_s
 
     def apply_force (self):
         if not self.is_active:
             return 
-        self.force = self.max_power * self.throttle / self.rocket.mass
+        self.force = self.max_power * self.throttle / self.rocket.mass * self.is_active
         ay = round(math.sin(math.radians(self.angle+90)) * self.force, 2)
 
         rho, phi = cart2pol(0, ay)
         phi += math.radians(self.rocket.rotation_angle)
         x, y = pol2cart(rho, phi)
-
-        # print(rho, math.degrees(phi), y)
-
-        # print(x, y)
 
         self.acc = np.array([[-x], [y]], float)
         
@@ -61,6 +50,6 @@ class Engine:
         self.d_time = d_time
         self.apply_force()
         self.rotational_force =  math.sin(math.radians(self.angle)) * self.force
-        self.update_fuel()
-        return self.acc, self.fuel_mass, self.rotational_force, self.distance_to_center_of_mass
+        self.calc_fuel_burned()
+        return self.acc, self.fuel_burned, self.rotational_force, self.distance_to_center_of_mass
         
