@@ -23,6 +23,7 @@ class Settings:
 
         # engines 
         self.engine1 =  35 * (10**6)*2
+        self.engine2 =  7 * (10**6)*2
 
         self.colors = {
             "red" : (255, 0, 0),

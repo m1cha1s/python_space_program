@@ -19,12 +19,14 @@ class Rocket:
         self.fuel_percentage_left = 0.5 # 0 - 1
         self.fuel_mass : float = self.mass * self.settings.fuel_percentage * self.fuel_percentage_left
         self.ship_mass = (1 - self.settings.fuel_percentage) * self.mass
-        self.engines = [Engine(self, self.settings.engine1, 0, 5000, self.fuel_mass)]
+        
         self.static_forces = [self.settings.gravity]
 
         self.starting_mass = self.ship_mass + self.fuel_mass
         self.starting_fuel_mass = self.mass * self.settings.fuel_percentage 
         self.mass = self.starting_mass
+        
+        self.engines = [Engine(self, self.settings.engine1, 0, 5000, 90), Engine(self, self.settings.engine2, 90, 1000, 90), Engine(self, self.settings.engine2, -90, 1000, 90)]
 
     def update_mass (self):
         self.fuel_mass -= self.fuel_mass_burned
@@ -52,18 +54,20 @@ class Rocket:
     def update (self, d_time):
         for engine in self.engines:
             self.acc_engines, self.fuel_mass_burned, self.rotation_force, self.distance_to_center_of_mass = engine.update(d_time)
+            print(self.acc_engines)
+            self.acc += self.acc_engines
             self.apply_rotational_force()
             self.update_mass()
 
+        if self.fuel_mass < 0:
+            for engine in self.engines:
+                del (engine)
+            self.engines.clear()
+            self.acc = np.zeros((2, 1))
+            self.rotation_acc = np.zeros((2, 1))
+
         self.rotational_speed += self.rotation_acc * d_time
         self.rotation_angle += self.rotational_speed * d_time
-        if self.rotation_angle > 360:
-            self.rotation_angle = self.rotation_angle % 360
-        
-        if self.rotation_angle < 0:
-            self.rotation_angle += 360
-
-        self.acc += self.acc_engines
 
         self.vel += self.acc * d_time
         self.pos += self.vel * d_time

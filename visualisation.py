@@ -51,17 +51,17 @@ def on_key_press(symbol, mod):
             sim.ships[0].engines[0].change_throttle(1)
         if symbol == key.S and sim.ships[0].engines[0].throttle >= 0.1:
             sim.ships[0].engines[0].change_throttle(-1)
-        if symbol == key.A and sim.ships[0].engines[0].angle > -90:
-            sim.ships[0].engines[0].angle -= 5
-        if symbol == key.D and sim.ships[0].engines[0].angle < 90:
-            sim.ships[0].engines[0].angle += 5
+        if symbol == key.A:
+            sim.ships[0].engines[2].throttle = 1
+        if symbol == key.D:
+            sim.ships[0].engines[1].throttle = 1
 
-# @window.event
-# def on_key_release(symbol, mod):
-#     if symbol == 119:
-#         # sim.ships[0].apply_force(np.array([[0],[35*(10**6)]], float))
-#     if symbol == 115:
-#         pass # down
+@window.event
+def on_key_release(symbol, mod):
+    if symbol == key.A:
+        sim.ships[0].engines[2].throttle = 0
+    if symbol == key.D:
+        sim.ships[0].engines[1].throttle = 0
 
 @window.event
 def on_draw():
