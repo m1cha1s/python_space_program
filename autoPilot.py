@@ -24,7 +24,11 @@ class AutoPilot:
         self.pid_y =  PID(1, 0.029, 100, 1000, 0) # Calibrated NO TOUCHY
         self.pid_Vy = PID(40, 0.8, 100, 1000, 0)   # Calibrated NO TOUCHY
 
+        self.pid_x = PID(1, 0, 0, 1000, -1000)
+        self.pid_Vx = PID(1, 0, 0, 1000, -1000)
+
         self.pid_y_val = 0
+        self.pid_x_val = 0
 
         self.complete = False
 
@@ -50,14 +54,33 @@ class AutoPilot:
                 self.pid_y_val = self.pid_y.compute(self.rocket.pos[1][0], self.goals[self.goal].pos[1][0], delta_time)
                 self.pid_y_val += self.pid_Vy.compute(self.rocket.vel[1][0], self.goals[self.goal].vel[1][0], delta_time)
 
-                thrust = self.pid_y_val/1000
+                thr_y = self.pid_y_val/1000
 
-                if thrust > 1:
-                    thrust = 1
-                if thrust < 0:
-                    thrust = 0
+                if thr_y > 1:
+                    thr_y = 1
+                if thr_y < 0:
+                    thr_y = 0
 
-                self.rocket.engines[0].throttle = thrust
+                self.pid_x_val = self.pid_x.compute(self.rocket.pos[0][0], self.goals[self.goal].pos[0][0], delta_time)
+                self.pid_x_val = self.pid_Vx.compute(self.rocket.vel[0][0], self.goals[self.goal].vel[0][0], delta_time)
+
+                thr_x = self.pid_x_val/1000
+
+                thr_x_l = 0
+                thr_x_r = 0
+
+                if thr_x > 0 :
+                    thr_x_r = thr_x
+                    if thr_x_r > 1 :
+                        thr_x_r = 1
+                if thr_x < 0 :
+                    thr_x_l = -thr_x
+                    if thr_x_l > 1 :
+                        thr_x_l = 1
+
+                self.rocket.engines[0].throttle = thr_y
+                self.rocket.engines[1].throttle = thr_x_r
+                self.rocket.engines[2].throttle = thr_x_l
                 
                 if self.rocket.pos[1][0] <= self.goals[self.goal].pos[1][0] + 5 and self.rocket.pos[1][0] >= self.goals[self.goal].pos[1][0] - 5:
                     self.goal += 1
