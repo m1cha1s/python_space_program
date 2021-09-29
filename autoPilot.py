@@ -21,11 +21,11 @@ class AutoPilot:
         self.goal = 0
         self.goals = goals
 
-        self.pid_y =  PID(3, 0.02, 5000, 1000, 0) # Calibrated NO TOUCHY
-        self.pid_Vy = PID(4, 0.3, 1, 1000, 0)   # Calibrated NO TOUCHY
+        self.pid_y =  PID(3, 0.03, 10000, 1000, 0) # Calibrated NO TOUCHY
+        self.pid_Vy = PID(4, 0.1, 10, 1000, 0)   # Calibrated NO TOUCHY
 
-        self.pid_x = PID(1, 0.01, 1, 1000, -1000)
-        self.pid_Vx = PID(10, 0.5, 50, 1000, -1000)
+        self.pid_x = PID(1, 0.034, 1000, 1000, -1000)
+        self.pid_Vx = PID(10, 0.5, 100, 1000, -1000)
 
         self.pid_y_val = 0
         self.pid_x_val = 0

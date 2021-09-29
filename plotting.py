@@ -11,7 +11,7 @@ ships_data = [{
     "mass" : 3 * (10**6),
     "vel" : np.array([[0], [0]], float),
     "acc" : np.array([[0], [0]], float),
-    "angle" : 1,
+    "angle" : 0,
 }]
 
 sim = Simulation(ships_params = ships_data)
