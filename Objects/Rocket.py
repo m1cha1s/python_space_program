@@ -54,7 +54,7 @@ class Rocket:
     def update (self, d_time):
         for engine in self.engines:
             self.acc_engines, self.fuel_mass_burned, self.rotation_force, self.distance_to_center_of_mass = engine.update(d_time)
-            print(self.acc_engines)
+            # print(self.acc_engines)
             self.acc += self.acc_engines
             self.apply_rotational_force()
             self.update_mass()

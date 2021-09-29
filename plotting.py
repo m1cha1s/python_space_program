@@ -26,6 +26,11 @@ t = []
 zero = []
 targets = []
 
+x = []
+vx = []
+
+fig, axs = plt.subplots(1, 2)
+
 while time < 500 :
     ao.update(dt)
     sim.run(dt)
@@ -35,11 +40,19 @@ while time < 500 :
     zero.append(0)
     t.append(time)
     targets.append(ao.goal*100)
+
+    x.append(sim.ships[0].pos[0][0])
+    vx.append(sim.ships[0].vel[0][0])
+
     time += dt
 
-plt.plot(t, zero)
-plt.plot(t, y)
-plt.plot(t, vy)
-plt.plot(t, targets)
-plt.plot(t, thr)
+axs[0].plot(t, zero)
+axs[0].plot(t, y)
+axs[0].plot(t, vy)
+axs[0].plot(t, targets)
+axs[0].plot(t, thr)
+
+axs[1].plot(t, x)
+axs[1].plot(t, vx)
+
 plt.show()
