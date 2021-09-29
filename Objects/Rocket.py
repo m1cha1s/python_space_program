@@ -20,7 +20,7 @@ class Rocket:
         self.engines = [Engine(self, self.settings.engine1, 0, 5000, self.fuel_mass)]
         self.static_forces = [self.settings.gravity]
 
-        self.fuel_percentage = 100
+        self.fuel_percentage = 50
 
     def apply_static_forces(self):
         for static_force in self.static_forces:
