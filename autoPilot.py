@@ -4,11 +4,12 @@ from typing import List
 from Objects.Rocket import Rocket
 import numpy as np
 from datetime import datetime
+from dataclasses import dataclass
 
+@dataclass
 class Target:
-    def __init__(self, pos:np.ndarray, vel:np.ndarray = np.zeros((2,1), float)) -> None:
-        self.pos = pos
-        self.vel = vel
+    pos : np.ndarray
+    vel : np.ndarray
 
 class AutoPilot:
     def __init__(self, rocket:Rocket, goals:List[Target], mode:str = "Auto") -> None:
@@ -23,8 +24,6 @@ class AutoPilot:
         self.pid_y =  PID(1, 0.029, 100, 1000, 0) # Calibrated NO TOUCHY
         self.pid_Vy = PID(40, 0.8, 100, 1000, 0)   # Calibrated NO TOUCHY
 
-        self.trig = 800
-
         self.pid_y_val = 0
 
         self.complete = False
@@ -37,13 +36,13 @@ class AutoPilot:
         self.logger = Logger("logs/FlightLog_{}.csv".format(datetime.now()))
 
     def update(self, delta_time):
-        self.logger.log([self.time, 
-                         self.rocket.pos[0][0], self.rocket.pos[1][0], 
-                         self.rocket.vel[0][0], self.rocket.vel[1][0],
-                         self.rocket.acc[0][0], self.rocket.acc[1][0],
-                         self.rocket.thrust,
-                         self.rocket.angle,
-                         ])
+        # self.logger.log([self.time, 
+        #                  self.rocket.pos[0][0], self.rocket.pos[1][0], 
+        #                  self.rocket.vel[0][0], self.rocket.vel[1][0],
+        #                  self.rocket.acc[0][0], self.rocket.acc[1][0],
+        #                  self.rocket.engines[0].throttle,
+        #                  self.rocket.angle,
+        #                  ])
         if round(self.rocket.vel[1][0]) == 0:
             self.apogee = self.rocket.pos[1][0]
         if self.mode == "Auto" :
@@ -58,14 +57,12 @@ class AutoPilot:
                 if thrust < 0:
                     thrust = 0
 
-                self.rocket.thrust = thrust
+                self.rocket.engines[0].throttle = thrust
                 
                 if self.rocket.pos[1][0] <= self.goals[self.goal].pos[1][0] + 5 and self.rocket.pos[1][0] >= self.goals[self.goal].pos[1][0] - 5:
-                    self.trig *= -1
-                    # self.pid_y.clear()
                     self.goal += 1
             elif not self.complete:
-                self.rocket.thrust = 0
+                self.rocket.engines[0].throttle = 0
                 print("Flight plan complete!!!")
                 self.landingSpeed = self.rocket.vel[1][0]
                 print("Landing V: {}".format(self.landingSpeed))

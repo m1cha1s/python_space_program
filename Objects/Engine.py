@@ -50,6 +50,10 @@ class Engine:
         phi += math.radians(self.rocket.rotation_angle)
         x, y = pol2cart(rho, phi)
 
+        # print(rho, math.degrees(phi), y)
+
+        # print(x, y)
+
         self.acc = np.array([[-x], [y]], float)
         
 
