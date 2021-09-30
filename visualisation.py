@@ -7,8 +7,8 @@ from Objects.particles import ParticleMenager
 from Settings import Settings
 import time
 
-# mode = "Auto"
-mode = "Manual"
+mode = "Auto"
+# mode = "Manual"
 
 window = pyglet.window.Window(1000, 500)
 
@@ -39,8 +39,8 @@ ships_data = [{
 
 sim = Simulation(ships_params = ships_data)
 
-ao = AutoPilot(sim.ships[0], [Target(np.array([[0],[800]], float), np.zeros((2,1), float)), 
-                              Target(np.array([[0],[0]], float), np.zeros((2,1), float))],
+ao = AutoPilot(sim.ships[0], [Target(np.array([[1050],[800]], float), np.zeros((2,1), float)), 
+                              Target(np.array([[1100],[0]], float), np.zeros((2,1), float))],
                               mode)
 
 @window.event
