@@ -8,7 +8,7 @@ from numpy.core.fromnumeric import argpartition, partition
 
 class Particle:
 
-    def __init__(self, settings, id, pos : np.ndarray, vel : np.ndarray, angle : int, size : float, color : tuple, deacrising_value : float) -> None:
+    def __init__(self, settings, pos : np.ndarray, vel : np.ndarray, angle : int, size : float, color : tuple, deacrising_value : float) -> None:
         self.id = id
         self.pos = pos
         self.vel = vel 
@@ -17,7 +17,7 @@ class Particle:
         self.color = color # white / yellow / orange / red
         self.deacrising_value = deacrising_value # how particle fast particle is going to disappear 
         self.settings = settings
-        self.shape = pyglet.shapes.Circle(self.pos[0][0], self.pos[1][0], self.size * 10, color = self.color)
+        self.shape = pyglet.shapes.Circle(self.pos[0][0], self.pos[1][0], self.size * 1000, color = self.color)
 
         if self.angle < 90:
             self.vel[0][0] *= -1
@@ -37,14 +37,9 @@ class Particle:
         self.pos = self.pos + self.vel * d_time
 
         self.size *= self.deacrising_value
-        print(f"Id: {self.id} Pos: {self.pos} Vel:{self.vel} angle: {self.angle} size: {self.size} color: {self.color} dea_value: {self.deacrising_value}")
-        print(type(self.color))
-
-        if self.color == -1 or self.size < 0.1:
-            del(self)
-            return
+        print(f"Pos: {self.pos} Vel:{self.vel} angle: {self.angle} size: {self.size} color: {self.color} dea_value: {self.deacrising_value}")
         
-        return 1 if self.color != -1 else 0
+        return 1 if (self.color != -1 and self.size > 0.1) else 0
 
     def draw (self):
         self.shape.x = self.pos[0][0]
@@ -63,7 +58,6 @@ class ParticleMenager:
         self.settings = settings
 
     def spawn_particles (self):
-        particle_id = 0
         particles_per_angle = int(self.energy / (self.degrees[1] - self.degrees[0]) + 1)
         for a in range (self.degrees[0], self.degrees[1]):
             for i in range (particles_per_angle):
@@ -83,10 +77,9 @@ class ParticleMenager:
                 vx = rand.randint(5, 15)
                 vy = rand.randint(5, 15)
                 s = rand.random()
-                if s < 0.5:
-                    s += 0.5
-                self.particles.append(Particle(self.settings, particle_id, self.pos, np.array([[vx], [vy]]), angle = a, size = s, color = color_tuple, deacrising_value = rand.random()))
-                particle_id += 1
+                if s > 0.5:
+                    s -= 0.5
+                self.particles.append(Particle(self.settings, self.pos, np.array([[vx], [vy]]), angle = a, size = s, color = color_tuple, deacrising_value = rand.random()))
         
 
     def update_particles (self, d_time):

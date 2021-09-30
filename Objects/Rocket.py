@@ -1,9 +1,11 @@
 import numpy as np
 from .Engine import Engine
+from .particles import ParticleMenager
 
 class Rocket:
 
     def __init__(self, settings, pos : np.ndarray, mass : float, vel : np.ndarray, acc : np.ndarray, angle : float  ) -> None:
+        self.is_hidden = False
         self.pos = pos
         self.acc = acc
         self.vel = vel
@@ -26,7 +28,9 @@ class Rocket:
         self.starting_fuel_mass = self.mass * self.settings.fuel_percentage 
         self.mass = self.starting_mass
         
-        self.engines = [Engine(self, self.settings.engine1, 0, 5000, 90), Engine(self, self.settings.engine2, 90, 1000, 90), Engine(self, self.settings.engine2, -90, 1000, 90)]
+        self.engines = [Engine(self, self.settings, self.settings.engine1, 0, 5000, 90), Engine(self, self.settings, self.settings.engine2, 90, 1000, 90), Engine(self, self.settings, self.settings.engine2, -90, 1000, 90)]
+
+        self.explode_particle_menager = ParticleMenager(self.settings, self.pos, 0, (0, 360))
 
     def update_mass (self):
         self.fuel_mass -= self.fuel_mass_burned
@@ -48,13 +52,23 @@ class Rocket:
 
     def check_high (self):
         if self.pos[1][0] < 0:
+            self.landing_explosion()
             self.vel *= 0
             self.pos[1][0] = 0
+
+    def landing_explosion (self):
+        if self.vel[1][0] > 3:
+            self.calc_kenergy()
+            self.explode_particle_menager.energy = self.kinetic_energy
+
+            self.is_hidden = True
+
+            self.explode_particle_menager.spawn_particles()
+        
     
     def update (self, d_time):
         for engine in self.engines:
             self.acc_engines, self.fuel_mass_burned, self.rotation_force, self.distance_to_center_of_mass = engine.update(d_time)
-            print(self.acc_engines)
             self.acc += self.acc_engines
             self.apply_rotational_force()
             self.update_mass()
@@ -75,6 +89,9 @@ class Rocket:
         self.acc = np.zeros((2, 1))
 
         self.check_high()
+        self.explode_particle_menager.update_particles(d_time)
+        self.explode_particle_menager.draw_particles()
+        print(self.explode_particle_menager.particles)
 
         self.mass = self.ship_mass + self.fuel_mass
         self.fuel_percentage_left = self.fuel_mass / self.starting_fuel_mass
