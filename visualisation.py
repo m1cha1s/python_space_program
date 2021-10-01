@@ -3,7 +3,7 @@ import pyglet
 from pyglet.window import key
 import numpy as np
 from simulation import Simulation
-from Objects.particles import ParticleMenager
+from Objects.Particles import ParticleMenager
 from Settings import Settings
 import time
 

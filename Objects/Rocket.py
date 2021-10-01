@@ -1,6 +1,6 @@
 import numpy as np
 from .Engine import Engine
-from .particles import ParticleMenager
+from .Particles import ParticleMenager
 
 class Rocket:
 

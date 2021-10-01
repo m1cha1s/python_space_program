@@ -25,6 +25,12 @@ class Settings:
         self.engine1 =  35 * (10**6)*2
         self.engine2 =  7 * (10**6)*2
 
+        #wind 
+        self.wind_num_of_levels = 10
+        self.wind_max_speed = 30
+        self.wind_min_speed = 0
+        self.wind_shear_component = 0.1 # obtained from tables online
+
         self.colors = {
             "red" : (255, 0, 0),
             "orange" : (255, 112, 0),

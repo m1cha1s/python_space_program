@@ -83,7 +83,7 @@ class AutoPilot:
 
                 t = ()
 
-                a = (self.goals[self.goal].pos[1][0]-)
+                a = (self.goals[self.goal].pos[1][0]-0)
 
                 # self.rocket.engines[0].throttle = thr_y
                 # self.rocket.engines[1].throttle = thr_x_r

@@ -1,6 +1,6 @@
 import numpy as np
 import math
-from .particles import ParticleMenager
+from .Particles import ParticleMenager
 
 def cart2pol(x, y):
     rho = np.sqrt(x**2 + y**2)
