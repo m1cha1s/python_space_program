@@ -21,14 +21,14 @@ class AutoPilot:
         self.goal = 0
         self.goals = goals
 
-        # self.pid_y =  PID(3, 0.03, 10000, 1000, 0) # Calibrated NO TOUCHY
-        # self.pid_Vy = PID(4, 0.1, 10, 1000, 0)   # Calibrated NO TOUCHY
+        self.pid_y =  PID(5, 0.041, 10000, 1000, 0) # Calibrated NO TOUCHY
+        self.pid_Vy = PID(4, 0.1, 10, 1000, 0)   # Calibrated NO TOUCHY
 
-        # self.pid_x = PID(1, 0.034, 1000, 1000, -1000)
-        # self.pid_Vx = PID(10, 0.5, 100, 1000, -1000)
+        self.pid_x = PID(1, 0.034, 1000, 1000, -1000)
+        self.pid_Vx = PID(10, 0.5, 100, 1000, -1000)
 
-        # self.pid_y_val = 0
-        # self.pid_x_val = 0
+        self.pid_y_val = 0
+        self.pid_x_val = 0
 
         self.complete = False
 
@@ -52,42 +52,40 @@ class AutoPilot:
         if self.mode == "Auto" :
             if self.goal < len(self.goals):
 
+                self.pid_y_val = self.pid_y.compute(self.rocket.pos[1][0], self.goals[self.goal].pos[1][0], delta_time)
+                self.pid_y_val += self.pid_Vy.compute(self.rocket.vel[1][0], self.goals[self.goal].vel[1][0], delta_time)
 
+                thr_y = self.pid_y_val/1000 * (self.rocket.mass/self.rocket.starting_mass)
 
-                # self.pid_y_val = self.pid_y.compute(self.rocket.pos[1][0], self.goals[self.goal].pos[1][0], delta_time)
-                # self.pid_y_val += self.pid_Vy.compute(self.rocket.vel[1][0], self.goals[self.goal].vel[1][0], delta_time)
+                if thr_y > 1:
+                    thr_y = 1
+                if thr_y < 0:
+                    thr_y = 0
 
-                # thr_y = self.pid_y_val/1000 * (self.rocket.mass/self.rocket.starting_mass)
+                self.pid_x_val = self.pid_x.compute(self.rocket.pos[0][0], self.goals[self.goal].pos[0][0], delta_time)
+                self.pid_x_val += self.pid_Vx.compute(self.rocket.vel[0][0], self.goals[self.goal].vel[0][0], delta_time)
 
-                # if thr_y > 1:
-                #     thr_y = 1
-                # if thr_y < 0:
-                #     thr_y = 0
+                thr_x = self.pid_x_val/1000 * (self.rocket.mass/self.rocket.starting_mass)
 
-                # self.pid_x_val = self.pid_x.compute(self.rocket.pos[0][0], self.goals[self.goal].pos[0][0], delta_time)
-                # self.pid_x_val += self.pid_Vx.compute(self.rocket.vel[0][0], self.goals[self.goal].vel[0][0], delta_time)
+                thr_x_l = 0
+                thr_x_r = 0
 
-                # thr_x = self.pid_x_val/1000 * (self.rocket.mass/self.rocket.starting_mass)
+                if thr_x > 0 :
+                    thr_x_r = thr_x
+                    if thr_x_r > 1 :
+                        thr_x_r = 1
+                if thr_x < 0 :
+                    thr_x_l = -thr_x
+                    if thr_x_l > 1 :
+                        thr_x_l = 1
 
-                # thr_x_l = 0
-                # thr_x_r = 0
+                # t = ()
 
-                # if thr_x > 0 :
-                #     thr_x_r = thr_x
-                #     if thr_x_r > 1 :
-                #         thr_x_r = 1
-                # if thr_x < 0 :
-                #     thr_x_l = -thr_x
-                #     if thr_x_l > 1 :
-                #         thr_x_l = 1
+                # a = (self.goals[self.goal].pos[1][0]-)
 
-                t = ()
-
-                a = (self.goals[self.goal].pos[1][0]-0)
-
-                # self.rocket.engines[0].throttle = thr_y
-                # self.rocket.engines[1].throttle = thr_x_r
-                # self.rocket.engines[2].throttle = thr_x_l
+                self.rocket.engines[0].throttle = thr_y
+                self.rocket.engines[1].throttle = thr_x_r
+                self.rocket.engines[2].throttle = thr_x_l
                 
                 if (self.rocket.pos[1][0] <= self.goals[self.goal].pos[1][0] + 5) and (self.rocket.pos[1][0] >= self.goals[self.goal].pos[1][0] - 5) and (self.rocket.pos[0][0] <= self.goals[self.goal].pos[0][0] + 5) and (self.rocket.pos[0][0] >= self.goals[self.goal].pos[0][0] - 5) :
                     self.goal += 1
