@@ -3,7 +3,7 @@ import pyglet
 from pyglet.window import key
 import numpy as np
 from simulation import Simulation
-from Objects.particles import ParticleMenager
+from Objects.Particles import ParticleMenager
 from Settings import Settings
 import time
 
@@ -66,7 +66,8 @@ def on_key_release(symbol, mod):
 @window.event
 def on_draw():
     window.clear()
-    ship.draw()
+    if not sim.ships[0].is_hidden:
+        ship.draw()
 
     apogee_label.draw()
     landing_speed_label.draw()
@@ -88,7 +89,7 @@ def on_draw():
 def update(dt):
     ao.update(dt)
     sim.run(dt)
-    #pman.update_particles(dt)
+    pman.update_particles(dt)
     speedometer.text = "Vx: {} Vy: {} m/s".format(round(sim.ships[0].vel[0][0],4), round(sim.ships[0].vel[1][0],4))
     altimeter.text = "X: {} H: {} m".format(round(sim.ships[0].pos[0][0],4), round(sim.ships[0].pos[1][0],4))
     rocket_angle.text = "Rocket angle: {} Engine angle: {} deg".format(round(sim.ships[0].rotation_angle,4), round(sim.ships[0].engines[0].angle,4))
