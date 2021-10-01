@@ -4,7 +4,7 @@ from .Particles import ParticleMenager
 
 class Rocket:
 
-    def __init__(self, settings, pos : np.ndarray, mass : float, vel : np.ndarray, acc : np.ndarray, angle : float  ) -> None:
+    def __init__(self, settings, wind, pos : np.ndarray, mass : float, vel : np.ndarray, acc : np.ndarray, angle : float  ) -> None:
         self.is_hidden = False
         self.pos = pos
         self.acc = acc
@@ -12,6 +12,7 @@ class Rocket:
         self.mass = mass
         self.kinetic_energy = 0
         self.settings = settings
+        self.wind = wind
 
         self.torque = 0
         self.rotation_acc = 0
@@ -84,7 +85,9 @@ class Rocket:
         self.rotational_speed += self.rotation_acc * d_time
         self.rotation_angle += self.rotational_speed * d_time
 
-        self.vel += self.acc * d_time
+        wind_speed = np.array([[self.wind.get_wind_speed(self.pos[0][0]) * d_time], [0]]) if self.pos[1][0] != 0 else 0
+
+        self.vel += self.acc * d_time + wind_speed
         self.pos += self.vel * d_time
 
         self.acc = np.zeros((2, 1))

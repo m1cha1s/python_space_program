@@ -26,8 +26,8 @@ class Settings:
         self.engine2 =  7 * (10**6)*2
 
         #wind 
-        self.wind_num_of_levels = 10
-        self.wind_max_speed = 30
+        self.wind_num_of_levels = 1
+        self.wind_max_speed = 10
         self.wind_min_speed = 0
         self.wind_shear_component = 0.1 # obtained from tables online
 

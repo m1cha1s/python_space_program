@@ -1,5 +1,5 @@
 import numpy as np
-from random import randint
+from random import randint, random
 
 class WindMenager:
 
@@ -12,6 +12,7 @@ class WindMenager:
         self.wind_shear_component = self.settings.wind_shear_component
         self.base_speed = randint(self.min_spped, self.max_speed)
         self.speeds = [self.base_speed]
+        self.direction = 1
 
     def calc_speed (self):
         for level in range (1, self.num_of_levels):
@@ -23,14 +24,14 @@ class WindMenager:
 
         print(self.speeds)
 
+    def change_direction (self, dt):
+
+        self.direction = 1 if random() > 0.5 else -1
+
     def get_wind_speed (self, h):
 
-        return self.speeds[int(h / self.settings.height * self.num_of_levels)]
+        print(self.direction)
+        
+        return self.base_speed * ((h / (self.level_high // 2))**self.wind_shear_component) * self.direction
 
-# from Settings import Settings
-
-# s = Settings()
-# a = WindMenager(s)
-
-# a.calc_speed()
-# print(a.get_wind_speed(334))
+        # return self.speeds[int(h / self.settings.height * self.num_of_levels) - 1] * direction

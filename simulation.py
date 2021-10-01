@@ -1,6 +1,7 @@
 import numpy as np
 import time
 from Objects.Rocket import Rocket
+from Objects.Wind import WindMenager
 from Settings import Settings
 
 class Simulation:
@@ -9,8 +10,10 @@ class Simulation:
         self.ships = []
         self.forces = np.array([[0], [0]], float)
         self.settings = Settings()
+        self.wind = WindMenager(self.settings)
+        self.wind.calc_speed()
         for i in range (num_of_ships):
-            self.ships.append(Rocket(self.settings, ships_params[i]["pos"], ships_params[i]["mass"], ships_params[i]["vel"], ships_params[i]["acc"], ships_params[i]["angle"]))
+            self.ships.append(Rocket(self.settings, self.wind, ships_params[i]["pos"], ships_params[i]["mass"], ships_params[i]["vel"], ships_params[i]["acc"], ships_params[i]["angle"]))
 
     # def _apply_forces_to_ships (self):
     #     for ship in self.ships:

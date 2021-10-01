@@ -111,4 +111,5 @@ pman = ParticleMenager(s, np.array([[500], [100]]), 100, (30, 60))
 pman.spawn_particles()
 
 pyglet.clock.schedule_interval(update, 0.00001)
+pyglet.clock.schedule_interval(sim.wind.change_direction, 2)
 pyglet.app.run()
