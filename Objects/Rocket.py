@@ -52,10 +52,10 @@ class Rocket:
         self.kinetic_energy = self.mass * (sum_v**2) / 2
 
     def check_high (self):
-        if self.pos[1][0] < 0:
+        if self.pos[1][0] < 5:
             self.landing_explosion()
             self.vel *= 0
-            self.pos[1][0] = 0
+            self.pos[1][0] = 5
 
     def landing_explosion (self):
         if self.vel[1][0] > 3:
@@ -85,7 +85,9 @@ class Rocket:
         self.rotational_speed += self.rotation_acc * d_time
         self.rotation_angle += self.rotational_speed * d_time
 
-        wind_speed = np.array([[self.wind.get_wind_speed(self.pos[0][0]) * d_time], [0]]) if self.pos[1][0] != 0 else 0
+        wind_speed = np.array([[self.wind.get_wind_speed(self.pos[0][0]) * d_time], [0]]) if self.pos[1][0] != 5 else 0
+
+        print (wind_speed)
 
         self.vel += self.acc * d_time + wind_speed
         self.pos += self.vel * d_time
@@ -95,7 +97,7 @@ class Rocket:
         self.check_high()
         self.explode_particle_menager.update_particles(d_time)
         self.explode_particle_menager.draw_particles()
-        print(self.explode_particle_menager.particles)
+        # print(self.explode_particle_menager.particles)
 
         self.mass = self.ship_mass + self.fuel_mass
         self.fuel_percentage_left = self.fuel_mass / self.starting_fuel_mass

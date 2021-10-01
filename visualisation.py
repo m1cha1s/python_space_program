@@ -7,8 +7,8 @@ from Objects.Particles import ParticleMenager
 from Settings import Settings
 import time
 
-mode = "Auto"
-# mode = "Manual"
+# mode = "Auto"
+mode = "Manual"
 
 window = pyglet.window.Window(1000, 500)
 
@@ -23,14 +23,18 @@ phase_indicator = pyglet.text.Label("Phase {}".format(None), x=880, y=460)
 apogee_label = pyglet.text.Label("Apogee: {}".format(None), y=400)
 landing_speed_label = pyglet.text.Label("Landing speed: {}".format(None), y=380)
 
-hundr_prc = pyglet.text.Label("100%", y=85)
-zero_prc = pyglet.text.Label("0%", x=20)
-thrustometer = pyglet.shapes.Rectangle(45, 0, 10, 0)
+hundr_prc = pyglet.text.Label("100%", y=90)
+zero_prc = pyglet.text.Label("0%", x=20, y=5)
+thrustometer = pyglet.shapes.Rectangle(45, 5, 10, 5)
 
 ship = pyglet.shapes.Rectangle(500, 0, 2, 40)
+ground = pyglet.shapes.Line(0, 0, 1000, 0, width = 5, color = (0, 255, 0))
+
+window_message_is_active = False
+windows_message_label = pyglet.text.Label("", x = window.width // 2, y = window.height // 2, anchor_x = "center", anchor_y = "center", font_size = 40)
 
 ships_data = [{
-    "pos" : np.array([[1000],[0]], float),
+    "pos" : np.array([[1000],[5]], float),
     "mass" : 3 * (10**6),
     "vel" : np.array([[0], [0]], float),
     "acc" : np.array([[0], [0]], float),
@@ -43,9 +47,17 @@ ao = AutoPilot(sim.ships[0], [Target(np.array([[1050],[800]], float), np.zeros((
                               Target(np.array([[1100],[0]], float), np.zeros((2,1), float))],
                               mode)
 
+# def show_message (mes):
+#     global window_message_is_active
+#     windows_message_label.text = mes
+#     window_message_is_active = True
+
+
 @window.event
 def on_key_press(symbol, mod):
+    global window_message_is_active
     mode = "Manual"
+    window_message_is_active = False
     if mode == "Manual":
         if symbol == key.W and sim.ships[0].engines[0].throttle <= 0.9:
             sim.ships[0].engines[0].change_throttle(1)
@@ -66,6 +78,7 @@ def on_key_release(symbol, mod):
 @window.event
 def on_draw():
     window.clear()
+    ground.draw()
     if not sim.ships[0].is_hidden:
         ship.draw()
 
@@ -85,26 +98,29 @@ def on_draw():
     zero_prc.draw()
     pman.draw_particles()
 
+    windows_message_label.draw()
+
 
 def update(dt):
-    ao.update(dt)
-    sim.run(dt)
-    pman.update_particles(dt)
-    speedometer.text = "Vx: {} Vy: {} m/s".format(round(sim.ships[0].vel[0][0],4), round(sim.ships[0].vel[1][0],4))
-    altimeter.text = "X: {} H: {} m".format(round(sim.ships[0].pos[0][0],4), round(sim.ships[0].pos[1][0],4))
-    rocket_angle.text = "Rocket angle: {} Engine angle: {} deg".format(round(sim.ships[0].rotation_angle,4), round(sim.ships[0].engines[0].angle,4))
-    fuel_indicator.text = "Ramaining fuel (engine #1): {}%".format(round(sim.ships[0].fuel_percentage_left * 100, 2))
-    thrustometer.height = 100 * sim.ships[0].engines[0].throttle
+    if not window_message_is_active:
+        ao.update(dt)
+        sim.run(dt)
+        pman.update_particles(dt)
+        speedometer.text = "Vx: {} Vy: {} m/s".format(round(sim.ships[0].vel[0][0],4), round(sim.ships[0].vel[1][0],4))
+        altimeter.text = "X: {} H: {} m".format(round(sim.ships[0].pos[0][0],4), round(sim.ships[0].pos[1][0],4))
+        rocket_angle.text = "Rocket angle: {} Engine angle: {} deg".format(round(sim.ships[0].rotation_angle,4), round(sim.ships[0].engines[0].angle,4))
+        fuel_indicator.text = "Ramaining fuel (engine #1): {}%".format(round(sim.ships[0].fuel_percentage_left * 100, 2))
+        thrustometer.height = 100 * sim.ships[0].engines[0].throttle
 
 
-    apogee_label.text = "Apogee: {}".format(ao.apogee)
-    landing_speed_label.text = "Landing speed: {}".format(ao.landingSpeed)
+        apogee_label.text = "Apogee: {}".format(ao.apogee)
+        landing_speed_label.text = "Landing speed: {}".format(ao.landingSpeed)
 
-    phase_indicator.text = "Phase {}".format(ao.goal+1)
+        phase_indicator.text = "Phase {}".format(ao.goal+1)
 
-    ship.x = sim.ships[0].pos[0][0]/2
-    ship.y = sim.ships[0].pos[1][0]/2
-    ship.rotation = sim.ships[0].rotation_angle
+        ship.x = sim.ships[0].pos[0][0]/2
+        ship.y = sim.ships[0].pos[1][0]/2
+        ship.rotation = sim.ships[0].rotation_angle
 
 s = Settings()
 pman = ParticleMenager(s, np.array([[500], [100]]), 100, (30, 60))
